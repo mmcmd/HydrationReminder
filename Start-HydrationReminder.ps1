@@ -39,6 +39,7 @@ function Start-HydrationReminder {
         [Int]
         $DailyWaterIntake = 2000,
         [Parameter(HelpMessage='Amount in hours you want to be reminded for')]
+        [ValidateRange(1,1000)]
         [Int]
         $Duration = 16
     )
