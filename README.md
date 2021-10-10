@@ -40,10 +40,26 @@ A fairly simple module to remind you (by default every hour) to drink some water
 ### Prerequisites
 
 - Powershell 5.1 or higher
-
-- BurntToast PowerShell module from the PowerShell gallery
 ```powershell
-Install-Module BurntToast
+PS C:\> $PSVersionTable
+
+
+Name                           Value
+----                           -----
+PSVersion                      5.1.19041.1237
+PSEdition                      Desktop
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+BuildVersion                   10.0.19041.1237
+CLRVersion                     4.0.30319.42000
+WSManStackVersion              3.0
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+
+```
+
+- [BurntToast PowerShell module from the PowerShell gallery](https://www.powershellgallery.com/packages/BurntToast) (must be installed from an elevated prompt)
+```powershell
+PS C:\Windows\System32> Install-Module BurntToast
 ```
 
 - Windows 10/Windows Server 2019 or higher
@@ -57,9 +73,12 @@ Install-Module HydrationReminder
 
 ## 🎈 Usage <a name="usage"></a>
 
-Running `Get-Help Start-HydrationReminder` will provide additional examples and details on how to use the command
+The commands from this module can be found by running `Get-Command -Module HydrationReminder`
 
-Parameter list and description:
+Running `Get-Help` on any of the commands will provide additional examples and details on how to use the command
+
+
+Parameter list and description for Start-HydrationReminder:
 Parameters | Type | Functionality
 -----------|------|---------------
 ReminderInterval | Integer | Interval in minutes at which you will receive a notification to drink. Default is 60 minutes (1 hour)
@@ -71,10 +90,7 @@ Duration | Integer | Amount in hours you want to be reminded for. Default is 16 
 ## 🚀 Deployment <a name = "deployment"></a>
 
 It is encouraged to create a task with Task Scheduler to run the command `Start-HydrationReminder` on logon.
-It is possible to simply run the code below in order to create this sort of task:
-```powershell
-# Insert code here
-```
+This can be done with the `New-HydrationReminderTask` command.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
