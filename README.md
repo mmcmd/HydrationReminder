@@ -85,11 +85,17 @@ DailyWaterInstake | Integer | Amount of daily water intake needed (in mL). Defau
 Duration | Integer | Amount in hours you want to be reminded for. Default is 16 hours (average amount of time a human is awake for before going to sleep)
 
 
+`Stop-HydrationReminder` can be run if you'd like to stop any active hydration reminder jobs
+
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
 It is encouraged to create a task with Task Scheduler to run the command `Start-HydrationReminder` on logon.
-This can be done with the `New-HydrationReminderTask` command.
+This can be done with the `Register-HydrationReminderTask` command.
+
+`Start-HydrationReminder` can be used to start the script
+`Stop-HydrationReminder` can be used to stop it
+`Unregister-HydrationReminderTask` removes the task created by `Register-HydrationReminderTask` 
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 

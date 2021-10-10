@@ -1,26 +1,38 @@
-#requires -Module BurntToast
-#requires -Version 5.0
+#requires -Modules BurntToast
+#requires -Version 5.1
 <#
 .SYNOPSIS
     Script that sends you a Windows Notification to remind you to hydrate
 .DESCRIPTION
-    Long description
+    A fairly simple module to remind you (by default every hour) to drink some water in order to stay hydrated. Inspired by a Twitch Hydration bot
 .EXAMPLE
-    Example of how to use this cmdlet
+    The following example would send a reminder every 45 mins for 24 hours and assume you're drinking 2500mL of water every 16 hours
+    Start-HydrationReminder -ReminderInterval 45 -DailyWaterIntake 2500 -Duration 24
 .EXAMPLE
-    Another example of how to use this cmdlet
-.INPUTS
-    Inputs to this cmdlet (if any)
+    The following example will use the default values of the cmdlet, which is to remind you every hour for 16 hours to drink
+    up to a total of 2000mL at the 16th hour
+    Start-HydrationReminder
+.PARAMETER ReminderInterval
+    Interval in minutes where a reminder will be sent
+.PARAMETER DailyWaterIntake
+    How much water per 16 hours needs to be consumed
+.PARAMETER Duration
+    Amount of hours notifications to hydrate will be sent for
 .OUTPUTS
-    Output from this cmdlet (if any)
-.NOTES
-    General notes
-.COMPONENT
-    The component this cmdlet belongs to
-.ROLE
-    The role this cmdlet belongs to
-.FUNCTIONALITY
-    The functionality that best describes this cmdlet
+    PSCustomObject
+        Outputs a PSCustomObject with the following properties:
+            Successful = boolean
+            ReminderInterval =  Interval in minutes where a reminder will be sent
+            DailyWaterIntake = How much water per 16 hours needs to be consumed
+            StartedAt = Time at which hydration reminder started (datetime)
+            EndsAt = Time at which hydration reminder will end (datetime)
+            Status = Status of the background job created
+            Location = Location attribute of the job created
+            JobID = ID of the job created
+            JobName = Name of the job created (by default called 'HydrationReminder')
+            JobInstanceID = Instance ID of the job created
+.LINK
+    https://github.com/mmcmd/HydrationReminder
 #>
 function Start-HydrationReminder {
     [CmdletBinding(SupportsShouldProcess=$true,
@@ -56,9 +68,11 @@ function Start-HydrationReminder {
 
     $EndTime = ($Init).AddHours($Duration)
 
+    $LogoPath = "$PSScriptRoot\..\images\drinkwater.png"
+
 
     $Job = {
-        param ($ReminderInterval,$DailyWaterIntake,$Duration,$Init,$EndTime)
+        param ($ReminderInterval,$DailyWaterIntake,$Duration,$Init,$EndTime,$LogoPath)
 
 
         while ($TimeSinceStart -le $EndTime) {
@@ -93,7 +107,7 @@ function Start-HydrationReminder {
 
             # Splat the parameters for readability
             $NotificationArgs = @{
-                AppLogo = "$PSScriptRoot\images\waterbottle.png"
+                AppLogo = $LogoPath
                 ExpirationTime = (Get-Date).AddMinutes(10)
                 Text = "It has been $TimeSinceStart since you've started your session and so far you should have consumed at least $TotalWaterConsumed mL of water to maintain optimal hydration!"
             }
@@ -105,7 +119,7 @@ function Start-HydrationReminder {
 
         if ($TimeSinceStart.TotalHours -gt $Duration) {
             $NotificationArgs = @{
-                AppLogo = "$PSScriptRoot\images\waterbottle.png"
+                AppLogo = $LogoPath
                 ExpirationTime = (Get-Date).AddMinutes(5)
                 Text = "Your reminder session has ended. In total you should have consumed $TotalWaterConsumed mL in the $Duration hours."
             }
@@ -120,7 +134,7 @@ function Start-HydrationReminder {
         if ($CheckForJobs) {
             throw "Hydration reminder is already running"
         }
-        $Job = Start-Job -ScriptBlock $Job -Name "HydrationReminder" -ArgumentList $ReminderInterval,$DailyWaterIntake,$Duration,$Init,$EndTime
+        $Job = Start-Job -ScriptBlock $Job -Name "HydrationReminder" -ArgumentList $ReminderInterval,$DailyWaterIntake,$Duration,$Init,$EndTime,$LogoPath
         $Output = [PSCustomObject]@{
             Successful = $true
             ReminderInterval = $ReminderInterval

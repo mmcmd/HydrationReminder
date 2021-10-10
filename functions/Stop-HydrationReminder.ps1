@@ -1,34 +1,18 @@
 <#
 .SYNOPSIS
-    Short description
-.DESCRIPTION
-    Long description
+    Stops any active notification jobs from HydrationReminders 
 .EXAMPLE
-    Example of how to use this cmdlet
-.EXAMPLE
-    Another example of how to use this cmdlet
-.INPUTS
-    Inputs to this cmdlet (if any)
-.OUTPUTS
-    Output from this cmdlet (if any)
-.NOTES
-    General notes
-.COMPONENT
-    The component this cmdlet belongs to
-.ROLE
-    The role this cmdlet belongs to
-.FUNCTIONALITY
-    The functionality that best describes this cmdlet
+    Stop-HydrationReminder
+.LINK
+    https://github.com/mmcmd/HydrationReminder
 #>
 function Stop-HydrationReminder {
-    [CmdletBinding(HelpUri = 'https://github.com/mmcmd/HydrationReminder',
-                   ConfirmImpact='Medium')]
-    [OutputType([PSObject])]
-    Param (
-    )
+    [CmdletBinding(HelpUri = 'https://github.com/mmcmd/HydrationReminder')]
+    [OutputType([PSCustomObject])]
+    Param ()
 
     $JobsStopped = [PSCustomObject]@()
-    
+
     try {
         $HydrationReminderJob = Get-Job -Name "HydrationReminder" | Where-Object {($_.Name -eq "HydrationReminder") -and ($_.State -eq "Running")}
         if (!$HydrationReminderJob) {

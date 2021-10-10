@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param ()
-Get-ChildItem -Path $PSScriptRoot\*.ps1 | ForEach-Object {
+Get-ChildItem -Path $PSScriptRoot\functions\*.ps1 | ForEach-Object {
     $File = $_
     try{
         . $_.FullName
