@@ -1,5 +1,4 @@
 <p align="center">
-  <a href="" rel="noopener">
  <img width=200px height=200px src="images/drinkwater.png" alt="Project logo"></a>
 </p>
 
@@ -68,7 +67,7 @@ PS C:\Windows\System32> Install-Module BurntToast
 
 - This module can be obtained from the PSGallery. Simply run the following command in an elevated command prompt:
 ```powershell
-Install-Module HydrationReminder
+PS C:\Windows\System32> Install-Module HydrationReminder
 ```
 
 ## 🎈 Usage <a name="usage"></a>
@@ -78,7 +77,7 @@ The commands from this module can be found by running `Get-Command -Module Hydra
 Running `Get-Help` on any of the commands will provide additional examples and details on how to use the command
 
 
-Parameter list and description for Start-HydrationReminder:
+Parameter list and description for `Start-HydrationReminder`:
 Parameters | Type | Functionality
 -----------|------|---------------
 ReminderInterval | Integer | Interval in minutes at which you will receive a notification to drink. Default is 60 minutes (1 hour)
@@ -96,6 +95,7 @@ This can be done with the `New-HydrationReminderTask` command.
 
 - [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1)
 - [BurntToast](https://github.com/Windos/BurntToast)
+- [VSCode](https://code.visualstudio.com/)
 
 ## ✍️ Authors <a name = "authors"></a>
 
