@@ -53,14 +53,18 @@ function Start-HydrationReminder {
 
     $Init = Get-Date
 
-    $Job = {
+    $EndTime = ($Init).AddHours($Duration)
 
-        while ($TimeSinceStart.TotalHours -le $Duration) {
+
+    $Job = {
+        param ($ReminderInterval,$DailyWaterIntake,$Duration,$Init,$EndTime)
+
+
+        while ($TimeSinceStart -le $EndTime) {
 
             Start-Sleep ($ReminderInterval*60)
 
-            $TimeSinceStart = ($Init - (Get-Date))
-
+            $TimeSinceStart = ((Get-Date) - $Init)
 
 
             # Calculate the amount of water that should have been consumed
@@ -75,12 +79,12 @@ function Start-HydrationReminder {
                 $TotalWaterConsumed = "$LitresConsumed`L $mLConsumed`mL"
             }
             else {
-                $TotalWaterConsumed = "$([Math]::Ceiling($TotalWaterConsumed)) mL"  # Round up a mL (there's nothing wrong with drinking a little more water 😉)
+                $TotalWaterConsumed = [Math]::Ceiling($TotalWaterConsumed)  # Round up a mL (there's nothing wrong with drinking a little more water 😉)
             }
 
             # Format time for notification
             if ($TimeSinceStart.Hours -lt 1){
-                $TimeSinceStart = "$($TimeSinceStart.TotalMinutes) minutes"
+                $TimeSinceStart = "$($TimeSinceStart.Minutes) minutes"
             }
             else {
                 $TimeSinceStart = "$($TimeSinceStart.Hours) hours $($TimeSinceStart.Minutes) minutes"
@@ -89,8 +93,8 @@ function Start-HydrationReminder {
             # Splat the parameters for readability
             $NotificationArgs = @{
                 AppLogo = "$PSScriptRoot\images\waterbottle.png"
-                ExpirationTime = (Get-Date).AddMinutes(5)
-                Text = "It has been $TimeSinceStart since you've started your session and so far you should have consumed at least $TotalWaterConsumed of water to maintain optimal hydration! 💦"
+                ExpirationTime = (Get-Date).AddMinutes(10)
+                Text = "It has been $TimeSinceStart since you've started your session and so far you should have consumed at least $TotalWaterConsumed mL of water to maintain optimal hydration!"
             }
 
             # Send out the notification
@@ -102,7 +106,7 @@ function Start-HydrationReminder {
             $NotificationArgs = @{
                 AppLogo = "$PSScriptRoot\images\waterbottle.png"
                 ExpirationTime = (Get-Date).AddMinutes(5)
-                Text = "Your reminder session has ended. In total you should have consumed $TotalWaterConsumed mL in the $Duration hours. 💦"
+                Text = "Your reminder session has ended. In total you should have consumed $TotalWaterConsumed mL in the $Duration hours."
             }
         }
 
@@ -111,26 +115,28 @@ function Start-HydrationReminder {
     }
 
     try {
-        $CheckForJobs = Get-Job -Name "hydrate" -ErrorAction SilentlyContinue | Where-Object { $_.State -eq "Running" }
+        $CheckForJobs = Get-Job -Name "HydrationReminder" -ErrorAction SilentlyContinue | Where-Object { $_.State -eq "Running" }
         if ($CheckForJobs) {
             throw "Hydration reminder is already running"
         }
-        Start-Job -ScriptBlock $Job -Name "hydration"
+        $Job = Start-Job -ScriptBlock $Job -Name "HydrationReminder" -ArgumentList $ReminderInterval,$DailyWaterIntake,$Duration,$Init,$EndTime
         $Output = [PSCustomObject]@{
             Successful = $true
             ReminderInterval = $ReminderInterval
             DailyWaterIntake = $DailyWaterIntake
             StartedAt = $Init.DateTime
-            EndsAt = (Get-Date).AddHours($Duration)
+            EndsAt = $EndTime
+            Status = $Job.State
+            Location = $Job.Location
+            JobID = $Job.Id
+            JobName = $Job.Name
+            JobInstanceID = $Job.InstanceId
         }    
     }
     catch {
-        $Output = [PSCustomObject]@{
-            Successful = $false
-        }
-        throw $_
+        throw "Failed to initiate hydration reminder. $($_.Exception.Message)"
     }
 
     return $Output
 }
-#Export-ModuleMember -Function "Start-HydrationReminder" -Alias "hydrate"
+Export-ModuleMember -Function "Start-HydrationReminder" -Alias "hydrate"
