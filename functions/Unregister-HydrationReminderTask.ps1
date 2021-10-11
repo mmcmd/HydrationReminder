@@ -1,4 +1,3 @@
-#requires -RunAsAdministrator
 <#
 .SYNOPSIS
     Removes any task that HydrationReminder created in Task Scheduler
