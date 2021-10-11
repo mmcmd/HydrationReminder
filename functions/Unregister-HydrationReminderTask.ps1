@@ -1,19 +1,18 @@
+#requires -RunAsAdministrator
 <#
 .SYNOPSIS
     Removes any task that HydrationReminder created in Task Scheduler
 .EXAMPLE
     PS C:\> Unregister-HydrationReminderTask
     Removes any task with the name "HydrationReminder" from 
-.INPUTS
-    Inputs (if any)
-.OUTPUTS
-    Output (if any)
-.NOTES
-    General notes
 #>
 function Unregister-HydrationReminderTask {
     [CmdletBinding(SupportsShouldProcess,ConfirmImpact="High")]
-    param ()
+    param (
+        [Parameter()]
+        [PSCredential]
+        $Credential
+    )
 
     try {
         Get-ScheduledTask -TaskName "HydrationReminder" -ErrorAction Stop

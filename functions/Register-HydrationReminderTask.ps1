@@ -1,3 +1,4 @@
+#requires -RunAsAdministrator
 <#
 .SYNOPSIS
     Registers a task in task scheduler to start reminding you to hydrate at startup

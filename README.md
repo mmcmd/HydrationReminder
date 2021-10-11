@@ -91,7 +91,7 @@ Duration | Integer | Amount in hours you want to be reminded for. Default is 16 
 ## 🚀 Deployment <a name = "deployment"></a>
 
 It is encouraged to create a task with Task Scheduler to run the command `Start-HydrationReminder` on logon.
-This can be done with the `Register-HydrationReminderTask` command.
+This can be done with the `Register-HydrationReminderTask`.
 
 `Start-HydrationReminder` can be used to start the script
 `Stop-HydrationReminder` can be used to stop it
