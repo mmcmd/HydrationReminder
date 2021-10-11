@@ -1,11 +1,9 @@
 <#
 .SYNOPSIS
-    Short description
-.DESCRIPTION
-    Long description
+    Removes any task that HydrationReminder created in Task Scheduler
 .EXAMPLE
-    PS C:\> <example usage>
-    Explanation of what the example does
+    PS C:\> Unregister-HydrationReminderTask
+    Removes any task with the name "HydrationReminder" from 
 .INPUTS
     Inputs (if any)
 .OUTPUTS
@@ -18,7 +16,7 @@ function Unregister-HydrationReminderTask {
     param ()
 
     try {
-        Get-ScheduledTask -TaskName "HydrationReminder"
+        Get-ScheduledTask -TaskName "HydrationReminder" -ErrorAction Stop
     }
     catch [Microsoft.PowerShell.Cmdletization.Cim.CimJobException] {
         throw "No HydrationReminder task found"
@@ -32,3 +30,4 @@ function Unregister-HydrationReminderTask {
     }
     
 }
+Export-ModuleMember -Function "Unregister-HydrationReminderTask"

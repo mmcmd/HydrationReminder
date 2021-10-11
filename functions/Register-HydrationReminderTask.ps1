@@ -55,5 +55,5 @@ function Register-HydrationReminderTask {
         }
         Register-ScheduledTask @Params
     }
-
 }
+Export-ModuleMember -Function "Register-HydrationReminderTask"
