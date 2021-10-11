@@ -65,7 +65,7 @@ PS C:\Windows\System32> Install-Module BurntToast
 
 ### Installing
 
-- This module can be obtained from the PSGallery. Simply run the following command in an elevated command prompt:
+- [This module can be obtained from the PSGallery](https://www.powershellgallery.com/packages/HydrationReminder). Simply run the following command in an elevated command prompt:
 ```powershell
 PS C:\Windows\System32> Install-Module HydrationReminder
 ```
