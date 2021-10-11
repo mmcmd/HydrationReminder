@@ -34,7 +34,7 @@ function Register-HydrationReminderTask {
 
     if ($PSCmdlet.ShouldProcess("Task Scheduler","New Task")) {
         $Time = New-ScheduledTaskTrigger -AtLogon
-        $Launch = New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "Import-Module HydrationReminder;$HydrationComamand"
+        $Launch = New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "Import-Module HydrationReminder;$HydrationCommand"
         if ($Credential) {
             $Params = @{
                 TaskName = "HydrationReminder"
