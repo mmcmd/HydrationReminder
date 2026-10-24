@@ -1,33 +1,24 @@
 <#
 .SYNOPSIS
-    Stops any active notification jobs from HydrationReminders 
+    Removes your hydration reminders completely
+.DESCRIPTION
+    Deletes the scheduled task and the saved settings. To pause instead, use Suspend-HydrationReminder.
 .EXAMPLE
-    Stop-HydrationReminder
+    PS C:\> Stop-HydrationReminder
 .LINK
     https://github.com/mmcmd/HydrationReminder
 #>
 function Stop-HydrationReminder {
-    [CmdletBinding(HelpUri = 'https://github.com/mmcmd/HydrationReminder')]
-    [OutputType([PSCustomObject])]
-    Param ()
+    [CmdletBinding(SupportsShouldProcess, HelpUri = 'https://github.com/mmcmd/HydrationReminder')]
+    param ()
 
-    $JobsStopped = [PSCustomObject]@()
+    $ErrorActionPreference = 'Stop'
 
-    try {
-        $HydrationReminderJob = Get-Job -Name "HydrationReminder" | Where-Object {($_.Name -eq "HydrationReminder") -and ($_.State -eq "Running")}
-        if (!$HydrationReminderJob) {
-            throw "No active hydration reminder job found"
-        }
-        $HydrationReminderJob | Stop-Job
-        $HydrationReminderJob | ForEach-Object {
-            $JobsStopped += Get-Job $_.Id
-        }
-        return $JobsStopped
+    if (-not (Get-ScheduledTask -TaskName $script:TaskName -ErrorAction SilentlyContinue)) {
+        throw "No hydration reminder is set up. Nothing to stop."
     }
-    catch {
-        Write-Error "Failed to stop hydration reminder. $($_.Exception.Message)"
+    if ($PSCmdlet.ShouldProcess('Task Scheduler', "Remove '$script:TaskName' task")) {
+        Unregister-ScheduledTask -TaskName $script:TaskName -Confirm:$false
+        Remove-Item -Path (Split-Path -Path $script:StatePath -Parent) -Recurse -Force -ErrorAction SilentlyContinue
     }
-
-
 }
-Export-ModuleMember -Function "Stop-HydrationReminder"

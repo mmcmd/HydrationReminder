@@ -1,0 +1,32 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pester:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module BurntToast, Pester -Scope CurrentUser -Force -SkipPublisherCheck
+      - name: Unit and integration tests
+        env:
+          HYDRATION_INTEGRATION: 1
+        run: |
+          Import-Module Pester -MinimumVersion 5.0
+          $Config = New-PesterConfiguration
+          $Config.Run.Path = './tests'
+          $Config.Run.Exit = $true
+          $Config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $Config

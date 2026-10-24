@@ -7,6 +7,9 @@ the change you wish to make via issue before submitting a pull request.
 
 - VSCode has PowerShell formatting functions which can help you achieve the formatting used in this project. Simply
 select all your code with the CTRL + A keys, and then right click "Format Selection".
+- Run the tests with `Invoke-Pester ./tests` (Pester 5+). They run on any OS.
+  Set `$env:HYDRATION_INTEGRATION = 1` first to also test against the real Task Scheduler on Windows
+  (this replaces your own `HydrationReminder` task).
 
 
 ## Pull Request Process

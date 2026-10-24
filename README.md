@@ -1,107 +1,110 @@
 <p align="center">
- <img width=200px height=200px src="images/drinkwater.png" alt="Project logo"></a>
+ <img width=200px height=200px src="images/drinkwater.png" alt="Project logo">
 </p>
 
 <h3 align="center">Hydration Reminder</h3>
 
 <div align="center">
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/mmcmd/HydrationReminder.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/mmcmd/HydrationReminder.svg)](https://github.com/mmcmd/HydrationReminder/pulls)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![CodeFactor](https://www.codefactor.io/repository/github/mmcmd/hydrationreminder/badge)](https://www.codefactor.io/repository/github/mmcmd/hydrationreminder)
+[![test](https://github.com/mmcmd/HydrationReminder/actions/workflows/test.yml/badge.svg)](https://github.com/mmcmd/HydrationReminder/actions/workflows/test.yml)
+[![GitHub Issues](https://img.shields.io/github/issues/mmcmd/HydrationReminder.svg)](https://github.com/mmcmd/HydrationReminder/issues)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENCE)
+
 </div>
 
 ---
 
-<p align="center"> A PowerShell module designed to remind you via Windows notification to drink some water every so often in order to stay hydrated!
-    <br> 
-</p>
+<p align="center">A PowerShell module that reminds you with a Windows notification to drink some water throughout your day. Set it up once and forget about it (but not about drinking).</p>
 
 ## 📝 Table of Contents
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
 - [Usage](#usage)
-- [Built Using](#built_using)
-- [Contributing](../CONTRIBUTING.md)
+- [How it works](#how_it_works)
+- [Contributing](CONTRIBUTING.md)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
 
-A fairly simple module to remind you (by default every hour) to drink some water in order to stay hydrated. Inspired by a Twitch [Hydration bot](https://github.com/Vuurvos1/stayHydratedFox)
+Every hour (by default) between 08:00 and 22:00 you get a notification telling you how much water you should have had by now to hit your daily goal. Snooze or dismiss it right from the notification. Inspired by a Twitch [Hydration bot](https://github.com/Vuurvos1/stayHydratedFox).
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
 ### Prerequisites
 
-- Powershell 5.1 or higher
-```powershell
-PS C:\> $PSVersionTable
-
-
-Name                           Value
-----                           -----
-PSVersion                      5.1.19041.1237
-PSEdition                      Desktop
-PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
-BuildVersion                   10.0.19041.1237
-CLRVersion                     4.0.30319.42000
-WSManStackVersion              3.0
-PSRemotingProtocolVersion      2.3
-SerializationVersion           1.1.0.1
-
-```
-
-- [BurntToast PowerShell module from the PowerShell gallery](https://www.powershellgallery.com/packages/BurntToast) (must be installed from an elevated prompt)
-```powershell
-PS C:\Windows\System32> Install-Module BurntToast
-```
-
-- Windows 10/Windows Server 2019 or higher
+- Windows 10 (1809 or later) or Windows 11
+- Windows PowerShell 5.1 (built in) or PowerShell 7
+- No administrator rights needed
 
 ### Installing
 
-- [This module can be obtained from the PSGallery](https://www.powershellgallery.com/packages/HydrationReminder). Simply run the following command in an elevated command prompt:
+From the PowerShell Gallery:
+
 ```powershell
-PS C:\Windows\System32> Install-Module HydrationReminder
+Install-Module HydrationReminder -Scope CurrentUser
+```
+
+This also installs [BurntToast](https://github.com/Windos/BurntToast), which shows the notifications.
+
+Or from source:
+
+```powershell
+Install-Module BurntToast -Scope CurrentUser
+git clone https://github.com/mmcmd/HydrationReminder
+Import-Module .\HydrationReminder\HydrationReminder.psd1
 ```
 
 ## 🎈 Usage <a name="usage"></a>
 
-The commands from this module can be found by running `Get-Command -Module HydrationReminder`
+```powershell
+Start-HydrationReminder     # set it up once with the defaults: every 60 min, 08:00-22:00, 2 L a day
+hydrate                     # show a reminder right now (also a quick way to check it works)
+```
 
-Running `Get-Help` on any of the commands will provide additional examples and details on how to use the command
+Customise it by running `Start-HydrationReminder` again with different settings:
 
+```powershell
+Start-HydrationReminder -Interval 45 -DailyGoal 2500 -StartTime 07:00 -EndTime 23:00
+Start-HydrationReminder -Unit Imperial                 # 64 fl oz a day
+Start-HydrationReminder -Unit Imperial -DailyGoal 80
+```
 
-Parameter list and description for `Start-HydrationReminder`:
-Parameters | Type | Functionality
------------|------|---------------
-ReminderInterval | Integer | Interval in minutes at which you will receive a notification to drink. Default is 60 minutes (1 hour)
-DailyWaterInstake | Integer | Amount of daily water intake needed (in mL). Default is 2000mL (2L)
-Duration | Integer | Amount in hours you want to be reminded for. Default is 16 hours (average amount of time a human is awake for before going to sleep)
+Parameter | Default | What it does
+----------|---------|-------------
+`-Interval` | `60` | Minutes between reminders
+`-DailyGoal` | `2000` / `64` | Daily water goal in the chosen unit
+`-Unit` | `Metric` | `Metric` (mL / L) or `Imperial` (fl oz)
+`-StartTime` | `08:00` | First reminder of the day
+`-EndTime` | `22:00` | Last reminder of the day
 
+### Quiet time
 
-`Stop-HydrationReminder` can be run if you'd like to stop any active hydration reminder jobs
+```powershell
+Suspend-HydrationReminder                  # no more reminders today, back tomorrow
+Suspend-HydrationReminder -Minutes 90      # back in 90 minutes
+Suspend-HydrationReminder -Until 17:00     # back at 17:00
+Suspend-HydrationReminder -Indefinitely    # off until you resume (settings are kept)
+Resume-HydrationReminder                   # undo any of the above
+Stop-HydrationReminder                     # remove it completely
+```
 
+Windows' **Do Not Disturb / Focus** also silences the reminders, which is handy for meetings and games.
 
-## 🚀 Deployment <a name = "deployment"></a>
+Run `Get-Help <command> -Full` on any command for details.
 
-It is encouraged to create a task with Task Scheduler to run the command `Start-HydrationReminder` on logon.
-This can be done with the `Register-HydrationReminderTask`.
+## ⚙️ How it works <a name = "how_it_works"></a>
 
-`Start-HydrationReminder` can be used to start the script
-`Stop-HydrationReminder` can be used to stop it
-`Unregister-HydrationReminderTask` removes the task created by `Register-HydrationReminderTask` 
+`Start-HydrationReminder` creates a scheduled task called `HydrationReminder` that runs as you, only while you're logged on. It triggers daily at `StartTime` and repeats every `Interval` minutes until `EndTime`. Each run shows one notification and exits, so nothing keeps running in the background. The console window is hidden with `conhost.exe --headless`.
 
-## ⛏️ Built Using <a name = "built_using"></a>
+Settings and pauses are stored in `%LOCALAPPDATA%\HydrationReminder\settings.json`.
 
-- [PowerShell](https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1)
-- [BurntToast](https://github.com/Windos/BurntToast)
-- [VSCode](https://code.visualstudio.com/)
+After `Update-Module HydrationReminder`, run `Start-HydrationReminder` again so the task uses the new version.
+
+### Upgrading from 1.0
+
+`Register-HydrationReminderTask` and `Unregister-HydrationReminderTask` are gone: `Start-HydrationReminder` and `Stop-HydrationReminder` now manage the task, and `-Duration` is replaced by `-StartTime`/`-EndTime`. A task registered by 1.0 has the same name and is replaced automatically.
 
 ## ✍️ Authors <a name = "authors"></a>
 
