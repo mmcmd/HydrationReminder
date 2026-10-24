@@ -81,7 +81,8 @@ Describe 'Reminder lifecycle' {
     }
     BeforeEach {
         Remove-Item -Path $script:TestState -ErrorAction SilentlyContinue
-        Mock -ModuleName HydrationReminder Register-ScheduledTask {}
+        # The fake trigger below is not a CimInstance, which the real -Trigger parameter type would reject on Windows
+        Mock -ModuleName HydrationReminder Register-ScheduledTask {} -RemoveParameterType Trigger
         Mock -ModuleName HydrationReminder New-ScheduledTaskTrigger { [PSCustomObject]@{ Repetition = $null } }
         Mock -ModuleName HydrationReminder Disable-ScheduledTask {}
         Mock -ModuleName HydrationReminder Enable-ScheduledTask {}
